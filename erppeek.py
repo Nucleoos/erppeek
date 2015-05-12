@@ -18,6 +18,7 @@ import shlex
 import sys
 import time
 import traceback
+import ssl
 try:                    # Python 3
     import configparser
     from threading import current_thread
@@ -344,7 +345,11 @@ class Service(object):
     def __init__(self, server, endpoint, methods, verbose=False):
         if isinstance(server, basestring):
             self._rpcpath = rpcpath = server + '/xmlrpc/'
-            proxy = ServerProxy(rpcpath + endpoint, allow_none=True)
+            # Force use of SSLv23
+            ssl_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+            proxy = ServerProxy(rpcpath + endpoint, allow_none=True,
+                                context=ssl_context
+                                )
             self._dispatch = proxy._ServerProxy__request
             if hasattr(proxy._ServerProxy__transport, 'close'):   # >= 2.7
                 self.close = proxy._ServerProxy__transport.close
