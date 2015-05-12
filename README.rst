@@ -4,7 +4,7 @@ ERPpeek, a versatile tool for browsing Odoo / OpenERP data
 
 Download and install the latest release::
 
-    pip install -U erppeek
+    pip install -U https://github.com/savoirfairelinux/erppeek/archive/master.zip
 
 .. contents::
    :local:
