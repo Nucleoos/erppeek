@@ -19,6 +19,12 @@ import sys
 import time
 import traceback
 import ssl
+try:
+    from sflvault.client import SFLvaultClient, commands as SFLvaultCommands
+except ImportError:
+    import ipdb; ipdb.set_trace()
+    SFLvaultClient = None
+    SFLvaultCommands = None
 try:                    # Python 3
     import configparser
     from threading import current_thread
@@ -1603,6 +1609,10 @@ def main(interact=_interact):
         help='full URL to the XML-RPC server (default: %s)' % DEFAULT_URL)
     parser.add_option('-d', '--db', default=DEFAULT_DB, help='database')
     parser.add_option('-u', '--user', default=None, help='username')
+    if SFLvaultClient:
+        parser.add_option(
+            '-s', '--sflvault', default=None,
+            help='sflvault VaultID for password')
     parser.add_option(
         '-p', '--password', default=None,
         help='password, or it will be requested on login')
@@ -1638,6 +1648,11 @@ def main(interact=_interact):
             args.server = ['-c', args.config] if args.config else DEFAULT_URL
         if not args.user:
             args.user = DEFAULT_USER
+        if SFLvaultClient and args.sflvault:
+            serv = SFLvaultClient(SFLvaultCommands.CONFIG_FILE).service_get(args.sflvault)
+            if serv:
+                args.password = serv.get("plaintext")
+
         client = Client(args.server, args.db, args.user, args.password,
                         verbose=args.verbose)
     client.context = {'lang': (os.getenv('LANG') or 'en_US').split('.')[0]}

@@ -31,6 +31,7 @@ Key features:
 - full API accessible on the ``Client`` object for OpenERP 5.0 through Odoo 8.0
 - the module can be imported and used as a library: ``from erppeek import Client``
 - supports Python 3 and Python 2 (>= 2.6)
+- supports SFLvault if installed
 
 
 
@@ -58,6 +59,8 @@ Although it is quite limited::
       --server=SERVER       full URL to the XML-RPC server (default: http://localhost:8069)
       -d DB, --db=DB        database
       -u USER, --user=USER  username
+      -s SFLVAULT, --sflvault=SFLVAULT
+                            sflvault VaultID for password
       -p PASSWORD, --password=PASSWORD
                             password, or it will be requested on login
       -m MODEL, --model=MODEL
