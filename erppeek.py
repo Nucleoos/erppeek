@@ -1511,6 +1511,20 @@ class Record(object):
 
 
 def _interact(global_vars, use_pprint=True, usage=USAGE):
+    try:
+        import IPython
+    except ImportError:
+        return _interact_fallback(global_vars, use_pprint, usage)
+    IPython.start_ipython(
+        argv=[
+            "--pprint" if use_pprint else "--no-pprint",
+            "--no-banner",
+        ],
+        user_ns=global_vars
+    )
+
+
+def _interact_fallback(global_vars, use_pprint=True, usage=USAGE):
     import code
     try:
         import builtins
