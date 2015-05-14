@@ -352,10 +352,14 @@ class Service(object):
         if isinstance(server, basestring):
             self._rpcpath = rpcpath = server + '/xmlrpc/'
             # Force use of SSLv23
-            ssl_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-            proxy = ServerProxy(rpcpath + endpoint, allow_none=True,
-                                context=ssl_context
-                                )
+            try:
+                ssl_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+                proxy = ServerProxy(rpcpath + endpoint, allow_none=True,
+                                    context=ssl_context
+                                    )
+            except:
+                proxy = ServerProxy(rpcpath + endpoint, allow_none=True,
+                                    )
             self._dispatch = proxy._ServerProxy__request
             if hasattr(proxy._ServerProxy__transport, 'close'):   # >= 2.7
                 self.close = proxy._ServerProxy__transport.close
