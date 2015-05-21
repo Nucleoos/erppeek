@@ -428,8 +428,8 @@ class Client(object):
     """
     _config_file = os.path.join(os.curdir, CONF_FILE)
 
-    def __init__(self, server, db=None, user=None, password=None,
-                 verbose=False):
+    def __init__(self, server, db=None, user=None, sflvault=None,
+                 password=None, verbose=False):
         if isinstance(server, basestring) and server[-1:] == '/':
             server = server.rstrip('/')
         elif isinstance(server, list):
@@ -455,6 +455,11 @@ class Client(object):
         self.reset()
         self.context = None
         if db:
+            if SFLvaultClient and password is None and sflvault:
+                sflvaultClient = SFLvaultClient(SFLvaultCommands.CONFIG_FILE)
+                serv = sflvaultClient.service_get(sflvault)
+                if serv:
+                    password = serv.get("plaintext")
             # Try to login
             self.login(user, password=password, database=db)
 
@@ -1652,12 +1657,9 @@ def main(interact=_interact):
             args.server = ['-c', args.config] if args.config else DEFAULT_URL
         if not args.user:
             args.user = DEFAULT_USER
-        if SFLvaultClient and args.sflvault:
-            serv = SFLvaultClient(SFLvaultCommands.CONFIG_FILE).service_get(args.sflvault)
-            if serv:
-                args.password = serv.get("plaintext")
 
         client = Client(args.server, args.db, args.user, args.password,
+                        args.sflvault if SFLvaultClient else None,
                         verbose=args.verbose)
     client.context = {'lang': (os.getenv('LANG') or 'en_US').split('.')[0]}
 
