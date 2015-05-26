@@ -22,7 +22,6 @@ import ssl
 try:
     from sflvault.client import SFLvaultClient, commands as SFLvaultCommands
 except ImportError:
-    import ipdb; ipdb.set_trace()
     SFLvaultClient = None
     SFLvaultCommands = None
 try:                    # Python 3
